@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Aquila Market</title>
+
+<meta charset="utf-8">
+
+<script src="lib/jquery-1.11.3.min.js"></script>
+<script src="lib/lib.min.js"></script>
+
+<script src="main.js"></script>
+<script src="mc.js"></script>
+<script src="conf.js"></script>
+<script src="rpc.js"></script>
+<script src="ui.js"></script>
+
+<script src="pageIndex.js"></script>
+<script src="pageClient.js"></script>
+<script src="pageKeys.js"></script>
+<script src="pageAddressBook.js"></script>
+<script src="pageOwner.js"></script>
+<script src="pageAdmin.js"></script>
+<script src="pageServers.js"></script>
+<script src="pageMsg.js"></script>
+<script src="pageForum.js"></script>
+<script src="pagePrivateMsg.js"></script>
+<script src="pageUploadImgs.js"></script>
+<script src="pageListings.js"></script>
+<script src="pageOrders.js"></script>
+<script src="pageRelease.js"></script>
+<script src="pageUser.js"></script>
+<script src="pageTrust.js"></script>
+<script src="pageFee.js"></script>
+
+<script src="../common/cutil.js"></script>
+<script src="../common/msg.js"></script>
+<script src="../common/ecMath.js"></script>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+<div id=outer>
+<div id=outer2>
+    <div class=spacer></div>
+
+    <div id=logo>
+        <a href="?" class=logolink>
+            <span id=logomain>AQUILA</span>
+            <span id=logosub></span>
+        </a>
+    </div>
+
+    <div id=topbar>
+        <span class=topelem style="border-style: none; box-shadow: none;">
+            <span class=link onclick="ui.navTo('servers');">
+                servers:
+                <span id=servers-count>&ensp;/&ensp;</span>
+                <span id=servers-dt class=small></span></span>,
+        </span>
+        <span class=topelem>
+            sigs: 
+            <span id=sigs-count>&ensp;/&ensp;</span>,
+        </span>
+        <span class=topelem>
+            <span id=log-show class=link onclick="ui.showPopup('log');">
+                show log
+            </a>
+        </span>
+    </div>
+
+    <div id=nagbar class=nh>
+        <span class=link onclick="ui.navTo('client');" id=nagbar-link>
+        </span>
+    </div>
+
+    <div style="clear:both;"></div>
+
+    <div id=leftbar>
+        <div style="padding-top: 8px;" id=categories>
+            <a class=leftitem style="font-size: 12px;">Loading Categories....</a>
+        </div>
+
+        <div class=leftsep>GENERAL</div>
+        <a class=leftitem href="?a=inbox">Private Messages</a>
+        <a class=leftitem href="?a=forumList">Public Forums</a>
+        <a class=leftitem href="?a=userInfo">My User Info</a>
+        <a class=leftitem href="?a=keys">Manage Keys</a>
+        <a class=leftitem href="?a=addressBook">Address Book</a>
+
+        <div id=for-buyers class=nh>
+            <div class=leftsep>BUYER TOOLS</div>
+            <a class=leftitem href="?a=orders&from=me">Orders Placed</a>
+            <a class=leftitem href="?a=trust&from=me">Feedback By Me</a>
+        </div>
+
+        <div id=for-sellers class=nh>
+            <div class=leftsep>SELLER TOOLS</div>
+            <a class=leftitem href="?a=listings">My Listings</a>
+            <a class=leftitem href="?a=uploadImgs">Upload Images</a>
+            <a class=leftitem href="?a=orders&to=me">Orders Received</a>
+            <a class=leftitem href="?a=trust&to=me">Feedback For Me</a>
+            <a class=leftitem href="?a=fees">Market Fees</a>
+        </div>
+
+        <div class=leftsep>ADVANCED</div>
+        <a class=leftitem href="?a=msg">Msg Explorer</a>
+        <a class=leftitem href="?a=marketControl">Market Control</a>
+        <div id=for-owners class=nh>
+            <a class=leftitem href="?a=owner">Owner Tools</a>
+            <a class=leftitem href="?a=fees">Market Fees</a>
+        </div>
+        <div id=for-admins class=nh>
+            <a class=leftitem href="?a=admin">Admin Tools</a>
+        </div>
+        <a class=leftitem href="?a=client">Client Version</a>
+    </div>
+
+<div id=page-default class="page nv">
+    <h1>Loading...</h1>
+    <noscript>
+        <p>JavaScript is disabled in your browser.</p>
+
+        <p>Aquila uses client-side cryptography to avoid trusting a
+        single remote server. This requires JavaScript in your browser.
+        To minimize the associated risk, we recommend that you save this
+        web page on your local computer (for example, on your desktop),
+        and always open the local copy of the market software.</p>
+        
+        <p>This isn't strictly necessary, but it limits your exposure to
+        malicious code to the initial download. Later upgrades should be
+        performed through the market, and the market will check their
+        signatures.</p>
+    </noscript>
+</div>
+
+
+<!-- a div for each page, only one at a time ever shown -->
+
+<div id=page-index class=page>
+    <h1>Market Home</h1>
+    <div id=index-info></div>
+</div>
+
+<div id=page-client class=page>
+    <h1>Client Software Version</h1>
+
+    <p>Aquila uses client-side cryptography to resist theft of funds
+    or disclosure of secret information, even if its servers are
+    compromised. For full security, the Aquila client <b>must be
+    installed locally</b>. If you don't install the client, then its
+    security is no better than for a standard web application.</p>
+
+    <p>The client is a single HTML file, with no other dependencies. To
+    install, right-click to download the file below, and save it to
+    local media. Then open the file with your web browser.</p>
+
+    <table class="borders props">
+        <tr>
+            <th colspan=2>You Are Running</th>
+        </tr><tr>
+            <td>Version:</td>
+            <td id=client-me class=mono></td>
+        </tr><tr>
+            <th colspan=2>The Market Recommends</th>
+        </tr><tr>
+            <td>Version:</td>
+            <td id=client-version class=mono></td>
+        </tr><tr>
+            <td>Download Link:</td>
+            <td id=client-url class=mono></td>
+        </tr><tr>
+            <td>File sha256 Hash:</td>
+            <td id=client-hash class=mono></td>
+        </tr>
+    </table>
+
+    <p>The recommended software version is obtained from a message
+    signed and broadcast by the market owners, and will change from
+    time to time.</p>
+
+    <p>The client is distributed as a single HTML file instead of a
+    browser extension because:</p>
+    <ul style="margin-right: 80px;">
+        <li>JavaScript in an ordinary web page is more sandboxed than
+        JavaScript in a browser extension, reducing the attack surface
+        if this client turns out to be malicious or flawed.</li>
+        <li>Installation of browser extensions is inconvenient on many
+        operating systems designed to run from read-only media.
+        </li>
+    </ul>
+
+    <p>The client that you are running now is free software: you can
+    redistribute it and/or modify it under the terms of the GNU General
+    Public License as published by the Free Software Foundation, either
+    version 3 of the License, or (at your option) any later version.</p>
+
+    <p>Copyright 2016 Aquila Developers</p>
+</div>
+
+<div id=page-inbox class=page>
+    <h1>Private Messages</h1>
+    <div class=tabs>
+        <span class="tab tab-sel">Inbox</span>
+        <a class="tab tab-unsel" href="?a=sent">Sent Items</a>
+        <a class="tab tab-unsel" href="?a=compose">Compose</a>
+    </div>
+
+    <table style="margin: 20px 10px;"><tr>
+        <td>From:&ensp;</td>
+        <td><input class=btcaddr id=inbox-from></td>
+        <td><div class=button-small data-address=inbox-from>
+            Address Book
+        </div></td>
+        <td>&emsp;<div class=button data-click=filter>Filter</div></td>
+        <td>&ensp;<div class=button data-click=clearFilter>Clear</div></td>
+    </tr><tr>
+        <td colspan=3 style="padding-top: 3px; padding-bottom: 5px;">
+            &emsp;<label>
+                <input type=checkbox id=inbox-unread> unread messages only
+            </label>
+        </td>
+    </tr></table>
+
+    <div id=inbox-msgs></div>
+
+    <div class=msgcount>
+        <div style="float: right;">
+            <div class=button id=inbox-newer>Newer</div>
+            <div class=button id=inbox-older>Older</div>
+            <span id=inbox-count></span>
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+    <p id=inbox-warning class=nh>
+        Messages older than <span id=inbox-warning-age></span> are not
+        shown, even if they're unread.
+    </p>
+</div>
+
+<div id=page-sent class=page>
+    <h1>Private Messages</h1>
+    <div class=tabs>
+        <a class="tab tab-unsel" href="?a=inbox">Inbox</a>
+        <span class="tab tab-sel">Sent Items</span>
+        <a class="tab tab-unsel" href="?a=compose">Compose</a>
+    </div>
+
+    <table style="margin: 20px 10px;"><tr>
+        <td>To:&ensp;</td>
+        <td><input class=btcaddr id=sent-to></td>
+        <td><div class=button-small data-address=sent-to>
+            Address Book
+        </div></td>
+        <td>&emsp;<div class=button data-click=filter>Filter</div></td>
+        <td>&ensp;<div class=button data-click=clearFilter>Clear</div></td>
+    </tr></table>
+
+    <div id=sent-msgs></div>
+    <div class=msgcount>
+        <div style="float: right;">
+            <div class=button id=sent-newer>Newer</div>
+            <div class=button id=sent-older>Older</div>
+            <span id=sent-count></span>
+        </div>
+    </div>
+</div>
+
+<div id=page-compose class=page>
+    <h1>Private Messages</h1>
+    <div class=tabs>
+        <a class="tab tab-unsel" href="?a=inbox">Inbox</a>
+        <a class="tab tab-unsel" href="?a=sent">Sent Items</a>
+        <span class="tab tab-sel">Compose</span>
+    </div>
+
+    <p>
+    <table class=twocol>
+        <tr>
+            <td>From:</td>
+            <td class=mono id=compose-from></td>
+        </tr><tr>
+            <td>To:</td>
+            <td><input class=btcaddr id=compose-to>
+            <div class=button-small data-address=compose-to id=compose-addrBook>
+                Address Book
+            </div></td>
+        </tr><tr>
+            <td>Subject:</td>
+            <td>
+                <input id=compose-subject class=compose style="width: 500px;">
+            </td>
+        </tr><tr id=compose-tx class=nh>
+            <td>Bitcoin Tx:</td>
+            <td>
+                pays to
+                <span id=compose-outAddr style="font-size: 14px;"></span>
+                &ensp;
+                <div class=button-small id=compose-viewTx>
+                    View Transaction
+                </div>
+            </td>
+        </tr><tr id=compose-order class=nh>
+            <td>State:</td>
+            <td>
+                <select id=compose-state>
+                    <option value="">(no change)</option>
+                    <option value="new">new</option>
+                    <option value="order received">order received</option>
+                    <option value="items shipped">shipped</option>
+                    <option value="order cancelled">cancelled</option>
+                    <option value="escrow released">escrow released</option>
+                </select>
+                &emsp;
+                <div class=button-small data-click=viewOrder>
+                    View Order
+                </div>
+            </td>
+        </tr><tr>
+            <td colspan=3 style="text-align: left;">
+                make msg also readable by &ensp;
+                <label>
+                    <input type=checkbox id=compose-me checked>
+                    sender (me)
+                </label>&ensp;
+                <label>
+                    <input type=checkbox id=compose-admins checked>
+                    market admins
+                </label>
+            </td>
+        </tr><tr>
+            <td colspan=2 style="text-align: left;">
+                <textarea style="margin:0; width: 600px;" class=compose id=compose-body></textarea>
+            </td>
+        </tr><tr>
+            <td colspan=2 style="text-align: left; padding-top: 12px;">
+                <div class=button-blue data-click=send>
+                    Broadcast Private Message
+                </div>
+                    &ensp; (plain text, no markup)
+            </td>
+    </table>
+</div>
+
+<div id=page-uploadImgs class=page>
+    <h1>Upload Images</h1>
+
+    <p>Uploaded images can be attached to listings. Existing images appear
+    below.</p>
+
+    <div id=uploadImgs-existing class=imgs></div>
+    <div style="clear:both;"></div>
+    <div style="padding: 10px 0 50px 0;">
+        <div class=button-blue data-click=delete id=uploadImgs-delete>
+            Broadcast Delete Selected Image
+        </div>
+    </div>
+
+    <p>
+        <div class=button data-click=preview>Select Image and Preview Upload</div>
+        &emsp;
+        <div class="button-blue nh" data-click=upload id=uploadImgs-upload>
+            Broadcast Upload Previewed Image
+        </div>
+    </p>
+    <table class="borders nh" id=uploadImgs-preview>
+        <thead><tr>
+            <th>Image</th>
+            <th>Thumbnail</th>
+        </tr></thead>
+        <tbody><tr>
+            <td>
+                <canvas id=uploadImgs-image></canvas>
+            </td><td>
+                <canvas id=uploadImgs-thumb></canvas>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id=page-search class=page>
+    <h1>Search Listings</h1>
+
+    <div class=indent>
+        <table class=twocol>
+        <tr>
+            <td>
+                <b>Category:</b>
+            </td><td>
+                <span id=search-category></span>
+            </td>
+        </tr><tr>
+            <td><b>Ship From:</b></td>
+            <td>
+                <input id=search-shipFrom size=2> &emsp;
+                <b>Ship To:</b>&nbsp;
+                <input id=search-shipTo size=2>
+            </td>
+        </tr><tr>
+            <td><b>Seller:</b></td>
+            <td colspan=3><input id=search-seller class=btcaddr></td>
+            <td>&emsp;<div class=button data-click=search>Filter</div></td>
+        </tr>
+        </table>
+    </div>
+
+    <div class=imgs id=search-results></div>
+</div>
+
+<div id=page-addressBook class=page>
+    <h1>Address Book</h1>
+    <p>Users on the market are identified by Bitcoin-style addresses
+    (coded hashes of public keys). To keep track of people more
+    conveniently, you can assign arbitrary nicknames to addresses.</p>
+
+    <p>Only you will see these nicknames. For security reasons, the
+    market does not try to provide a global address book.</p>
+
+    <p>
+        <table class=twocol>
+            <tr>
+                <td>Address:</td>
+                <td><input class=btcaddr id=addressBook-new-addr></td>
+                <td rowspan=2 style="padding-left: 20px;">
+                    <div class=button data-click=add>Add / Edit</div>
+                </td>
+            </tr><tr>
+                <td>Nickname:</td>
+                <td><input id=addressBook-new-nickname size=30></td>
+            </tr>
+        </table>
+    </p>
+
+    <table id=addressBook class=borders>
+        <thead><tr>
+            <th>Address (PK Hash)</th>
+            <th>Nickname</th>
+            <th></th>
+        </tr></thead>
+        <tbody id=addressBook-body></tbody>
+
+        <tfoot>
+            <td colspan=3 class=action-button>
+                <div class=button id=addressBook-delete>Delete</div>
+            </td>
+        </table>
+    </table>
+</div>
+
+<div id=page-forumList class=page>
+    <h1>Forum List</h1>
+    <p>
+    <table class=borders>
+        <thead><tr>
+            <th>Name</th>
+        </tr></thead>
+        <tbody id=forumList-body></tbody>
+    </table>
+    </p>
+</div>
+
+<div id=page-forum class=page>
+    <h1 id=forum-title></h1>
+
+    <table id=forum-postings class=borders>
+        <thead><tr>
+            <th>Age</th>
+            <th>From</th>
+            <th>Subject</th>
+        </tr></thead>
+        <tbody id=forum-postings-body></tbody>
+    </table>
+
+    <div id=forum-parent></div>
+    <div id=forum-replies></div>
+
+    <div class=msgcount style="margin-bottom: 40px; margin-right: 15px;">
+        <div style="float: right;">
+            <div class=button id=forum-newer>Newer</div>
+            <div class=button id=forum-older>Older</div>
+            <span id=forum-count></span>
+        </div>
+    </div>
+
+    <div class=compose id=forum-compose>
+        Subject: <input id=forum-subject class=compose><br>
+        <textarea class=compose id=forum-body></textarea><br>
+        <div id=forum-post class=button-blue data-click=post>
+            Broadcast New Forum Post
+        </div>
+        &ensp; (plain text, no markup)
+    </div>
+</div>
+
+<div id=page-keys class=page>
+    <h1>Manage Keys</h1>
+    <p>All users identify themselves to the market using cryptographic
+    key pairs. The browser may store these key pairs persistently (across
+    exit and reboot), but you should also back them up by exporting them
+    to a file and saving it locally.</p>
+
+    <p>
+        <div class=button data-click=export>Export Keys To File</div>
+    </p>
+
+    <p>To import from a backup file, delete all keys below. You will then be
+    prompted to import.</p>
+
+    <table class=borders>
+    <thead><tr>
+        <th>PK Hash</th>
+        <th>Type</th>
+        <th>Secret Key (WIF)</th>
+        <th>Public Key (hex)</th>
+        <th>Age</th>
+        <th>Action</th>
+    </tr></thead>
+    <tbody id=keys-list></tbody>
+    </table>
+
+    <table style="margin: 20px 0 20px 0;"><tr>
+        <td>
+            <div class=button data-click=rotateEncryptionKey>
+                Rotate Encryption Key
+            </div> &emsp; &ensp;
+        </td><td>
+            <div class=button data-click=newBuyerIdentity>
+                Generate New Buyer Pseudonym
+            </div>
+        </td>
+    </tr></table>
+
+    <table style="margin-top: 35px;"><tr>
+        <td>
+            <div class=button data-click=deleteAll>
+                Delete All Keys
+            </div>
+        </td><td>
+            &emsp;
+            <input type=text id=keys-delete-confirm size=11>
+        </td><td>
+            &ensp; (type "DELETE ALL" in box to confirm)
+        </td>
+    </tr></table>
+
+    <p>If you delete all keys, then you will lose the ability to decrypt
+    messages sent to you, or to release escrowed funds. Do not rely on
+    any delete button here to securely delete keys. Use encrypted volumes,
+    and wipe or physically destroy media at end of life.</p>
+
+</div>
+
+<div id=page-deleteKey class=page>
+    <div id=deleteKey-crypt class=nh>
+        <h1>Delete Old Encryption Key</h1>
+        <p>By deleting this key, you will make all messages encrypted with it
+        permanently unreadable. These messages are:</p>
+    </div>
+    <div id=deleteKey-id class=nh>
+        <h1>Delete Old Pseudonym</h1>
+        <p>By deleting this pseudonym, you will lose the ability to send
+        new messages under this identity, or to release any escrowed
+        funds. You will also lose access to any encrypted messages sent
+        to this pseudonym. These messages are:</p>
+    </div>
+
+    <table class=borders>
+    <thead><tr>
+        <th>Type</th>
+        <th>Hash</th>
+        <th>Age</th>
+    </tr></thead>
+    <tbody id=deleteKey-msgs></tbody>
+    </table>
+    <p id=deleteKey-count></p>
+
+    <table style="margin-top: 25px;"><tr>
+        <td>
+            <div class=button data-click=delete>
+                Delete
+            </div>
+        </td><td>
+            &emsp;
+            <input type=text id=deleteKey-confirm size=9>
+        </td><td>
+            &ensp; (type "DELETE" in box to confirm)
+        </td>
+    </tr></table>
+</div>
+
+<div id=page-listingNew class=page>
+    <h1>Create New Listing</h1>
+
+    <div class=compose>
+        <table class=twocol style="margin: -20px 0 -4px 0;">
+            <tr>
+                <td>Currency:</td>
+                <td><select id=listingNew-currency></select></td>
+            </tr><tr>
+                <td>Ship From:</td>
+                <td>
+                    <input id=listingNew-from size=12>
+                    <span style="position: relative; top: 13px;">
+                        &ensp;(like "DE", "FR,GB", "EU,CH", "ANY", etc.)
+                    </span>
+                </td>
+            </tr><tr>
+                <td>Ship To:</td>
+                <td>
+                    <input id=listingNew-to size=12>
+                </td>
+            </tr><tr>
+                <td>Category:</td>
+                <td><select id=listingNew-category></select></td>
+            </tr><tr>
+                <td>Title:</td>
+                <td><input id=listingNew-subject class=compose></td>
+            </tr>
+        </table>
+        <textarea class=compose id=listingNew-body style="margin-bottom: 3px; width: 600px;"></textarea><br>
+        &ensp; (plain text, no markup)
+    </div>
+
+    <p>Select images from the list below to attach to this listing. Images
+    must already have been uploaded.</p>
+    <div id=listingNew-images class=imgs></div>
+    <div style="clear:both;"></div>
+
+    <p>From the table below, the buyer must choose one line from the "main"
+    group, and one line from the "shipping" group if it's present.</p>
+    <table class=borders>
+        <thead><tr>
+            <th>Item Description</th>
+            <th>Price Each</th>
+            <th>Group</th>
+            <th></th>
+        </tr></thead>
+        <tbody id=listingNew-items>
+            <tr id=listingNew-items-add-row>
+                <td colspan=3 style="border: none; background: white;">
+                <td style="border: none; padding-top: 5px; background: white;">
+                    <div class=button-small id=listingNew-items-add>Add Row</div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><div class=button-blue id=listingNew-create>
+        Broadcast New Listing
+    </div></p>
+</div>
+
+<div id=page-listings class=page>
+    <h1>My Current Listings</h1>
+    <p>
+        <table class=borders>
+            <thead><tr>
+                <th>Title</th>
+                <th>Age</th>
+                <th></th>
+            </tr></thead>
+            <tbody id=listings-existing></tbody>
+            <tfoot>
+                <td colspan=3 class=action-button>
+                    <div class=button id=listings-delete>Delete</div>
+                </td>
+            </table>
+        </table>
+    </p>
+    <p>
+        <div class=button onclick="ui.navTo('listingNew');">
+            Create New Listing
+        </div>
+    </p>
+</div>
+
+<div id=page-listing class=page>
+    <h1 id=listing-subject></h1>
+    <p class=nh id=listing-deleted><b>This listing has been deleted.</b></p>
+
+    <div class=imgs>
+        <div><b>Category:</b> <span id=listing-category></div>
+        <div><b>Ship From:</b> <span id=listing-from></div>
+        <div><b>Ship To:</b> <span id=listing-to></div>
+    </div>
+    <div style="clear:both;"></div>
+    <div id=listing-body></div>
+
+    <div id=listing-images class=imgs></div>
+    <div style="clear:both;"></div>
+
+    <p><table class=borders>
+        <thead>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Qty</th>
+        </thead>
+        <tbody id=listing-items></tbody>
+    </table></p>
+
+    <p>Shipping address, and notes to seller:<br>
+    <textarea style="margin:0; width: 400px; height: 100px;" class=compose id=listing-compose></textarea>
+    </p>
+
+    <p style="margin-top: 30px;"><div class=button-blue id=listing-order>
+        Broadcast Place New Order
+    </div> &emsp; <b id=listing-total></b></p>
+
+    <p>The multisig payment address will be generated after you broadcast
+    the order, and exchange rates will be locked. Your order may be
+    cancelled if you don't send payment within thirty minutes.</p>
+</div>
+
+<div id=page-orders class=page>
+    <h1 id=orders-title>Orders</h1>
+
+    <table class=borders style="width: 700px;" id=orders-table>
+        <thead><tr>
+            <th>Hash</th>
+            <th>Age</th>
+            <th>Title</th>
+            <th>Buyer</th>
+            <th>Seller</th>
+        </tr></thead>
+        <tbody id=orders-list></tbody>
+    </table>
+    <div class=msgcount>
+        <div style="float: right;">
+            <div class=button id=orders-newer>Newer</div>
+            <div class=button id=orders-older>Older</div>
+            <span id=orders-count></span>
+        </div>
+    </div>
+</div>
+
+<div id=page-order class=page>
+    <h1 id=order-title>View Existing Order</h1>
+
+    <table class="twocol noedit" style="margin-bottom: -5px; margin-top: 10px;">
+        <tr>
+            <td>Hash:</td>
+            <td id=order-hash class=mono></td>
+        </tr><tr>
+            <td>Listing:</td>
+            <td id=order-listing></td>
+        </tr><tr>
+            <td>Seller:</td>
+            <td id=order-seller></td>
+        </tr><tr>
+            <td>Buyer:</td>
+            <td id=order-buyer></td>
+        </tr><tr>
+            <td>Age:</td>
+            <td id=order-age></td>
+        </tr><tr>
+            <td>Pay To:</td>
+            <td id=order-addr></td>
+        </tr>
+    </table>
+
+    <p>The buyer must send payment in the given amount to the Bitcoin address
+    above. The seller will confirm that payment has been received,
+    by clicking the address to view it in a blockchain explorer.</p>
+    <div class=indent>
+        <table class=borders>
+            <thead><tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price (Each)</th>
+                <th>Price (Total)</th>
+            </tr></thead>
+            <tbody id=order-items></tbody>
+        </table>
+    </div><br>
+
+    <p>The following private messages have been sent regarding this order:</p>
+    <div class=indent style="padding-top: 2px; padding-bottom: 5px;">
+        <div class=button id=order-compose>
+            New Private Message
+        </div> &emsp;
+        <div class=button id=order-propose-upper>
+            Propose Escrow Release
+        </div> &nbsp;
+        <div class="button nh" id=order-trust>
+            Leave Feedback
+        </div>
+    </div>
+    <div class=indent>
+        <div id=order-msgs></div>
+    </div>
+    <br>
+    <div class="button nh" id=order-propose-lower>
+        Propose Different Escrow Release
+    </div>
+</div>
+
+<div id=page-release class=page>
+    <h1>Order Escrow Release</h1>
+
+    <table class="twocol noedit">
+        <tr>
+            <td>Order:</td>
+            <td id=release-order></td>
+        </tr><tr>
+            <td>Seller:</td>
+            <td id=release-seller></td>
+        </tr><tr>
+            <td>Buyer:</td>
+            <td id=release-buyer></td>
+        </tr><tr>
+            <td>Pay From:</td>
+            <td id=release-payFrom></td>
+        </tr><tr>
+            <td>Value In:</td>
+            <td id=release-valueIn></td>
+        </tr><tr>
+            <td>Pay To:</td>
+            <td id=release-payTo></td>
+        </tr><tr>
+            <td>Value Out:</td>
+            <td id=release-valueOut></td>
+        </tr><tr>
+            <td>Fee:</td>
+            <td id=release-fee></td>
+        </tr><tr>
+            <td>Transaction:</td>
+            <td>
+                <div class=button-small data-click=viewTx>
+                    View As Hex
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <p><div class=button id=release-go>
+        Compose Message Accepting Escrow Release
+    </div></p>
+</div>
+
+<div id=page-msg class=page>
+    <h1>Msg Explorer</h1>
+    <div id=msg-search>
+    <p><table class=twocol>
+        <tr>
+            <td>Hash:</td>
+            <td><input type=text id=msg-hash class=hash></td>
+        </tr>
+        <tr>
+            <td>Type:</td>
+            <td>
+                <input type=text id=msg-type list=msg-types>
+                <datalist id=msg-types>
+                    <option value="marketControl">
+                    <option value="delegateProxyVote">
+                    <option value="approveNewIdentity">
+                    <option value="keysForIdentity">
+                    <option value="publicComment">
+                    <option value="privateComment">
+                    <option value="trust">
+                    <option value="image">
+                    <option value="listing">
+                    <option value="deleteMessage">
+                    <option value="placeOrder">
+                    <option value="requestFeePayment">
+                    <option value="paidFee">
+                </datalist>
+            </td>
+        </tr>
+        <tr>
+            <td>Time:</td>
+            <td>
+                <input type=text id=msg-minTime size=5>
+                to <input type=text id=msg-maxTime size=5>
+                (Unix time, or -x for x days ago)
+            </td>
+        </tr>
+        <tr>
+            <td>sigFrom:</td>
+            <td><input type=text id=msg-sigFrom class=btcaddr> (sender)</td>
+        </tr>
+        <tr>
+            <td>cipherTo[0]:</td>
+            <td><input type=text id=msg-cipherTo class=btcaddr> (intended recipient)</td>
+        </tr>
+        <tr>
+            <td>
+                <input type=text id=msg-custom-key list=msg-customs size=5>:
+                <datalist id=msg-customs>
+                    <option value=pkhId>
+                    <option value=ref>
+                    <option value=category>
+                    <option value=shipFrom>
+                    <option value=shipTo>
+                    <option value=to>
+                </datalist>
+            </td>
+            <td><input type=text id=msg-custom-value></td>
+        </tr>
+        <tr>
+            <td>Skip first:</td>
+            <td>
+                <input type=text id=msg-skipResults size=5 placeholder=0>
+                results
+                &ensp; <label>
+                    <input type=checkbox id=msg-deletedOk>
+                    include deleted
+                </label>
+            </td>
+        </tr>
+    </table></p>
+
+    <p> <div class=button data-click=get>Search Messages</div> &emsp;
+        <div class=button data-click=getAll>Clear Filters</div>
+    </p>
+    </div>
+
+    <textarea class="mono nh" cols=100 rows=30 id=msg-json style="overflow-x: scroll; margin-top: 30px;" wrap=off spellcheck=false readonly></textarea>
+
+    <table class="borders nh" id=msg-table-many style="margin-top: 30px;">
+    <thead><tr>
+        <th>Hash</th>
+    </tr></thead>
+    <tbody id=msg-hashes></tbody>
+    </table>
+    <p class=nh id=msg-count></p>
+
+</div>
+
+<div id=page-marketControl class=page>
+    <h1>Market Control</h1>
+    <p>Control of the market (i.e., the ability to allow or ban users, or
+    moderate a forum, or release escrow to resolve a buyer-seller dispute)
+    is determined by a vote of many owners, with ownership tracked in the
+    Bitcoin blockchain.</p>
+
+    <p> <div class=indent>
+        <div class=button data-click=refresh>Refresh ticker/marketControl</div>
+    </div> </p>
+    
+    <p>The current elected admins are:</p>
+    <div id=marketControl-marketControl class=mktcm></div>
+
+    <p>The owners are:</p>
+    <div id=marketControl-owners class=mktcm></div>
+
+    <p>The owners have delegated voting power
+        (<span class=mono>agent : [ principal0, ... ]</span>) as follows:</p>
+    <div id=marketControl-delegates class=mktcm></div>
+
+    <p>The ticker, which contains frequently-changing information needed
+    by the client, is:</p>
+    <div id=marketControl-ticker class=mktcm></div>
+</div>
+
+<div id=page-owner class=page>
+    <h1>Owner Tools <span id=owner-stake style="font-size: 16px; font-weight: normal;"></h1>
+    <div class=tabs>
+        <span class="tab tab-sel" data-tab=owner-vote>
+            Vote For Admins
+        </span>
+        <span class="tab tab-unsel" data-tab=owner-nominate>
+            Nominate Myself
+        </span>
+        <span class="tab tab-unsel" data-tab=owner-proxy>
+            Proxy Vote
+        </span>
+    </div>
+
+    <div class="nv tab-content" id=owner-vote>
+        <p>This is a list of marketControl messages. Only one is
+        effective, but many can be broadcast and awaiting votes. The
+        message with greatest total voting power becomes effective
+        after a delay, typically a few minutes.</p>
+
+        <table class=borders>
+        <thead><tr>
+            <th>Hash</th>
+            <th>adminPkh[0]</th>
+            <th>Age</th>
+            <th>Voting Power</th>
+            <th></th>
+        </tr></thead>
+        <tbody id=owner-votables></tbody>
+        <tfoot>
+            <td colspan=5 class=action-button>
+                <div class=button-blue id=owner-vote-button>Vote</div>
+            </td>
+        </table>
+    </div>
+
+
+    <div class=tab-content id=owner-nominate>
+        <p>
+            Compose and broadcast a marketControl message. All owner's
+            keys that you control will vote for this message. In most
+            cases, more votes from other users will be required before
+            it becomes effective.
+        </p>
+        <p>
+<textarea class=mono cols=80 rows=20 id=owner-market-control style="overflow-x: scroll;" wrap=off spellcheck=false></textarea>
+        </p>
+        <p>
+            <div class=button data-click=checkMarketControl>
+                Check Format
+            </div> &emsp;
+            <div class=button-blue data-click=broadcastMarketControl>
+                Broadcast Nomination
+            </div>
+        </p>
+    </div>
+
+    <div class=tab-content id=owner-proxy>
+        <p>If you broadcast a proxy message, then the person that you
+        specify can vote on your behalf on marketControl messages. Select
+        an owner's key, and delegate or rescind proxy voting power:</p>
+
+        <p><table class=borders>
+        <thead><tr>
+            <th>pkhId</th>
+            <th>Shares</th>
+            <th></th>
+        </tr></thead>
+        <tbody id=owner-pkhs></tbody>
+        </table></p>
+
+        <p>
+            <table><tr>
+            <td><input type=text id=owner-proxy-addr class=btcaddr></td>
+            <td>&ensp;
+            <div class=button-blue id=owner-delegate>
+                Broadcast Delegate To Proxy
+            </div></td>
+            </tr></table>
+        </p>
+        <p style="margin-top: 25px;">
+            If you rescind the proxy, then they lose that authority.
+        </p>
+        <p>
+            <div class=button-blue id=owner-rescind>
+                Broadcast Rescind Proxy
+            </div>
+        </p>
+    </div>
+
+</div>
+
+<div id=page-admin class=page>
+    <h1>Admin Tools</h1>
+    <div class=tabs>
+        <span class="tab tab-sel" data-tab=admin-approve>
+            Approve or Ban User
+        </span>
+        <span class="tab tab-unsel" data-tab=admin-delete>
+            Delete Message
+        </span>
+        <span class="tab tab-unsel" data-tab=admin-fee>
+            Request Fee
+        </span>
+    </div>
+
+    <div class="nv tab-content" id=admin-approve>
+        <p>
+        <table class=twocol>
+            <tr>
+                <td>Approve As:</td>
+                <td>
+                    <label>
+                        <input type=radio name=admin-approve id=admin-approve-buy checked>
+                        buyer
+                    </label>
+                    <label><input type=radio name=admin-approve id=admin-approve-sell>
+                        seller
+                    </label>
+                    <label><input type=radio name=admin-approve id=admin-approve-ban>
+                        ban
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Address:</td>
+                <td><input type=text id=admin-approve-pkhId class=btcaddr></td>
+            </tr>
+            <tr>
+                <td>Valid From:</td>
+                <td>
+                    <input type=text id=admin-approve-validFrom size=10>
+                    <span style="position: relative; top: 16px;">
+                        &ensp; (Unix time, or +/-x for x days in future/past)
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>Valid To:</td>
+                <td><input type=text id=admin-approve-validTo size=10></td>
+            </tr>
+            <tr>
+                <td>kB Per Day:</td>
+                <td><input type=text id=admin-approve-kbPerDay size=5></td>
+            </tr>
+            <tr>
+                <td>Comment:</td>
+                <td><input type=text id=admin-approve-comment size=40></td>
+            </tr>
+
+        </table>
+        </p>
+        <p>
+            <div class=button-blue data-click=approveNewIdentity>
+                Broadcast Approve (or Ban) Identity
+            </div>
+        </p>
+    </div>
+
+    <div class=tab-content id=admin-delete>
+        <p>
+        <table class=twocol>
+            <tr>
+                <td>Hash:</td>
+                <td><input type=text id=admin-delete-hash class=hash></td>
+            </tr>
+            <tr>
+                <td>Comment:</td>
+                <td><input type=text id=admin-delete-comment size=40></td>
+            </tr>
+        </table>
+        </p>
+        <p>
+            <div class=button-blue data-click=delete>
+                Broadcast Delete Message
+            </div>
+        </p>
+    </div>
+
+    <div class=tab-content id=admin-fee>
+        <p>CSV format, one row per payment, "from,to,amount", amount in BTC.</p>
+        <p>
+            <textarea rows=15 cols=80 id=admin-fee-text placeholder="1SenderXXX,1RecipientXXX,0.32"></textarea>
+        </p>
+        <div style="margin-top: -10px; margin-bottom: 22px;">
+            Comment:
+            <input type=text size=45 id=admin-fee-comment>
+        </div>
+        <p>
+            <div class=button-blue data-click=requestFeePayment>
+                Broadcast Request Fee
+            </div>
+        </p>
+    </div>
+
+</div>
+
+<div id=page-userInfo class=page>
+    <h1>My User Information</h1>
+    <p>This page contains public information about you. For example,
+    a seller might post general policies here, or off-market contact
+    information. Other users will see this page when they click your
+    address.</p>
+    <div class=indent>
+        <div class=compose style="margin-top: 0; padding-top: 0;">
+            Title: <input id=userInfo-subject class=compose><br>
+            <textarea class=compose id=userInfo-body></textarea><br>
+            <div class=button-blue data-click=post>
+                Broadcast New User Info
+            </div>
+            &ensp; (plain text, no markup)
+        </div>
+    <p style="margin-top: 35px;">
+        <div class=button data-click=user>
+            View My User Information As Others Will See It
+        </div>
+    </p>
+    </div>
+</div>
+
+<div id=page-user class=page>
+    <h1>User Information</h1>
+
+    <table class="twocol noedit">
+        <tr>
+            <td>User:</td>
+            <td>
+                <input class=btcaddr id=user-pkh>&emsp;
+                <div class=button data-click=search>Get User Info</div>
+            </td>
+        </tr><tr>
+            <td>Last Seen:</td>
+            <td id=user-ago></td>
+        </tr><tr>
+            <td>Private Msg:</td>
+            <td>
+                <div class=button-small data-click=compose>
+                    Compose To User
+                </div>
+            </td>
+        </tr><tr>
+            <td>Role:</td>
+            <td>
+                <div id=user-seller class=nh>
+                    seller &ensp;
+                    <div class=button-small data-click=listings>
+                        View Listings
+                    </div>
+                    &emsp;
+                    <div class=button-small data-click=ordersTo>
+                        View Orders
+                    </div>
+                </div>
+                <div id=user-buyer class=nh>
+                    buyer &ensp;
+                    <div class=button-small data-click=ordersFrom>
+                        View Orders
+                    </div>
+                </div>
+                <div id=user-admin class=nh> admin </div>
+                <div id=user-owner class=nh> owner </div>
+                <div id=user-banned class=nh> BANNED </div>
+            </td>
+        </tr><tr>
+            <td>Effective:</td>
+            <td id=user-valid></td>
+        </tr><tr>
+            <td>Feedback:</td>
+            <td>
+                <div class=button-small data-click=trustFrom>
+                    Left By User
+                </div> &emsp;
+                <div class=button-small data-click=trustTo>
+                    Received For User
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div id=user-info>no user info</div>
+</div>
+
+<div id=page-trustNew class=page>
+    <h1>Provide Feedback</h1>
+    <p>Leave a score of +1 after an entirely successful transaction, or -1
+    if you got scammed. A score of zero has the same effect as no
+    feedback at all.</p>
+    <table class=twocol>
+        <tr>
+            <td>Left By:</td>
+            <td id=trustNew-from class=mono></td>
+        </tr><tr>
+            <td>For User:</td>
+            <td><input class=btcaddr id=trustNew-to></td>
+        </tr><tr>
+            <td>Order:</td>
+            <td><input class=hash id=trustNew-order></td>
+        </tr><tr>
+            <td>Score:</td>
+            <td><input id=trustNew-score value="+1" size=5></td>
+        </tr><tr>
+            <td>Comment:</td>
+            <td><input id=trustNew-comment size=40 maxlength=100></td>
+        </tr>
+    </table>
+    <p>
+        <div class=button-blue data-click=post>
+            Broadcast Feedback
+        </div>
+    </p>
+</div>
+
+<div id=page-trust class=page>
+    <h1 id=trust-title>View Feedback</h1>
+    <table class=twocol>
+        <tr>
+            <td>Left By:</td>
+            <td><input class=btcaddr id=trust-from></td>
+        </tr><tr>
+            <td>For User:</td>
+            <td>
+                <input class=btcaddr id=trust-to> &ensp;
+                <div class=button data-click=search>Search</div>
+            </td>
+        </tr>
+    </table>
+
+    <table class=borders>
+    <thead><tr>
+        <th>Age</th>
+        <th>Left By</th>
+        <th>For</th>
+        <th>Comment</th>
+        <th>Score</th>
+        <th>Order</th>
+    </tr></thead>
+    <tbody id=trust-msgs></tbody>
+    </table>
+    <div class=msgcount>
+        <div style="float: right;">
+            <div class=button id=trust-newer>Newer</div>
+            <div class=button id=trust-older>Older</div>
+            <span id=trust-count></span>
+        </div>
+    </div>
+</div>
+
+<div id=page-fees class=page>
+    <h1>Market Fees</h1>
+    <p>Market fees are generally paid from sellers to owners, but may be
+    used for other purposes too (e.g., to refund a bond posted by a seller).
+    They are totally independent of payment for items bought and sold on the
+    market.</p>
+
+    <p style="margin-top: 20px;">
+        <b>Requests</b> from the market admins to pay fees:
+    </p>
+    <div class=indent><p>
+        <div class=button onclick="ui.navTo('feeRequests', { 'from' : 'me' });">
+            Fees That I Pay</div> &emsp;
+        <div class=button onclick="ui.navTo('feeRequests', { 'to' : 'me' });">
+            Fees That I Receive</div> &emsp;
+        <div class=button onclick="ui.navTo('feeRequests');">
+            All Fees</div> &emsp;
+    </p></div>
+
+    <p style="margin-top: 30px;">
+        <b>Confirmations</b> from users claiming to have paid fees:
+    </p>
+    <div class=indent><p>
+        <div class=button onclick="ui.navTo('feePayments', { 'from' : 'me' });">
+            Fees That I Pay</div> &emsp;
+        <div class=button onclick="ui.navTo('feePayments', { 'to' : 'me' });">
+            Fees That I Receive</div> &emsp;
+        <div class=button onclick="ui.navTo('feePayments');">
+            All Fees</div> &emsp;
+    </p></div>
+
+    <p>Stealth-style payment is used, so the fee recipient needs this
+    confirmation to find the payment in the blockchain.</p>
+</div>
+
+<div id=page-feeRequests class=page>
+    <h1>Requested Fee Payments</h1>
+    <p>The admins have requested that users make payments as follows:</p>
+    <table class=twocol>
+        <tr>
+            <td>From:</td>
+            <td><input class=btcaddr id=feeRequests-from></td>
+        </tr><tr>
+            <td>To:</td>
+            <td>
+                <input class=btcaddr id=feeRequests-to> &ensp;
+                <div class=button data-click=search>
+                    Search
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class=borders>
+    <thead><tr>
+        <th>Hash</th>
+        <th>Age</th>
+        <th>By Admin</th>
+        <th>Comment</th>
+    </tr></thead>
+    <tbody id=feeRequests-lines></tbody>
+    </table>
+</div>
+
+<div id=page-feeRequest class=page>
+    <h1>Requested Fee Payment</h1>
+    <p>In one specific payment request:</p>
+    <table class="twocol noedit">
+        <tr>
+            <td>Hash:</td>
+            <td id=feeRequest-hash class=mono></td>
+        </tr><tr>
+            <td>Age:</td>
+            <td id=feeRequest-age></td>
+        </tr><tr>
+            <td>By Admin:</td>
+            <td id=feeRequest-adminSuper></td>
+        </tr><tr>
+            <td>Comment:</td>
+            <td id=feeRequest-comment></td>
+        </tr>
+    </table>
+
+    <table class=borders>
+    <thead><tr>
+        <th>From</th>
+        <th>To</th>
+        <th>Value<br>(BTC)</th>
+        <th></th>
+    </tr></thead>
+    <tbody id=feeRequest-lines></tbody>
+    </table>
+</div>
+
+<div id=page-feePayments class=page>
+    <h1>Completed Fee Payments</h1>
+    <p>Users claim to have made payments as follows:</p>
+    <table class=twocol>
+        <tr>
+            <td>From:</td>
+            <td><input class=btcaddr id=feePayments-from></td>
+        </tr><tr>
+            <td>To:</td>
+            <td>
+                <input class=btcaddr id=feePayments-to> &ensp;
+                <div class=button data-click=search>
+                    Search
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class=borders>
+    <thead><tr>
+        <th>Hash</th>
+        <th>Age</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Value<br>(BTC)</th>
+    </tr></thead>
+    <tbody id=feePayments-lines></tbody>
+    </table>
+</div>
+
+<div id=page-feePayment class=page>
+    <h1>Completed Fee Payment</h1>
+    <p>A user claims to have made the following payment:</p>
+    <table class="twocol noedit">
+        <tr>
+            <td>Hash:</td>
+            <td id=feePayment-hash class=mono></td>
+        </tr><tr>
+            <td>Age:</td>
+            <td id=feePayment-age></td>
+        </tr><tr>
+            <td>From:</td>
+            <td id=feePayment-from></td>
+        </tr><tr>
+            <td>To:</td>
+            <td id=feePayment-to></td>
+        </tr><tr>
+            <td>Amount:</td>
+            <td id=feePayment-amount></td>
+        </tr><tr>
+            <td>Request:</td>
+            <td id=feePayment-request></td>
+        </tr><tr>
+            <td>Pay To:</td>
+            <td id=feePayment-address></td>
+        </tr><tr id=feePayment-wif-row class=nh>
+            <td>WIF:</td>
+            <td id=feePayment-wif class=mono></td>
+        </tr>
+    </table>
+
+    <p>The sender must pay Bitcoin to the address given above, in the
+    given amount.</p>
+
+    <p>The recipient may import this address as WIF to another wallet,
+    and spend the payment from there.</p>
+</div>
+
+<div id=page-servers class=page>
+    <h1>Server List</h1>
+    <p>The table shows the server URI, goodness metric, average
+    response time, last seen time, whether it appears in marketControl,
+    and whether it appears in the hard-coded bootstrap list.</p>
+    <table class=borders>
+    <thead><tr>
+        <th>URI</th>
+        <th>Gdns</th>
+        <th>resp (s)</th>
+        <th>ago</th>
+        <th>mktC?</th>
+        <th>btstrp?</th>
+    </tr></thead>
+    <tbody id=servers-working></tbody>
+    </table>
+    <br>
+
+    <p>Choose servers</p>
+    <div class=indent style="margin-top: -8px;"><label>
+        <input type=radio name=servers-how id=servers-auto>
+        automatically (recommended)
+    </label></div>
+    <div class=indent>
+        <label>
+            <input type=radio name=servers-how id=servers-manual>
+            manually, always using:
+        </label>
+        <div style="margin-top: 5px; margin-left: 50px;">
+            <input class=mono id=servers-manual-0 size=60><br>
+            <input class=mono id=servers-manual-1 size=60><br>
+            <input class=mono id=servers-manual-2 size=60><br>
+        </div>
+    </div>
+    <p> <div class=button data-click=save>Save Changes</div> </p>
+
+</div>
+
+
+<!-- a div for each popup, only one at a time ever shown -->
+
+<div id=popup-captcha class=popup>
+    <h1>CAPTCHA Required</h1>
+    <p id=captcha-bad>
+        Last CAPTCHA wrong, please retry.
+    </p>
+    <p>
+        <img src="" id=captcha-img><br>
+        <input type=text size=10 id=captcha-text>
+    </p>
+    <p>
+        <div class=button-blue id=captcha-broadcast>
+            Broadcast Message
+        </div> &emsp;
+        <div class=button id=captcha-another>
+            Get Different CAPTCHA
+        </div> &emsp;
+        <div class=button onclick="ui.hidePopup();">
+            Dismiss Window
+        </div>
+    </p>
+</div>
+
+<div id=popup-keys class=popup>
+    <h1>No Keys in Browser Local Storage</h1>
+    <p>No cryptographic key pairs were found in browser local storage. All
+    market buyers, sellers, owners, and admins need key pairs to identify
+    themselves to the market.</p>
+    <div class=indent style="margin-top: 25px; margin-bottom: 30px;">
+        <div class=button data-click=newRandom>
+            Make New Identity
+        </div>
+        &emsp;
+        <div class=button data-click=import>Import From File</div>
+        &emsp;
+        <div class=button onclick="ui.navTo('index');">Remain As Guest</div>
+    </div>
+    <div class=button-small id=keys-advanced data-click=advanced>
+        Show Advanced
+    </div>
+
+    <div id=keys-import-wif class=nh style="margin-top: 30px;">
+        <p>When you create a new identity, the address that other users will
+        see is usually generated randomly. You can instead import that address
+        as WIF (e.g., from vanitygen).</p>
+        <div class=indent style="margin-top: 12px;">
+            <p style="margin-bottom: 23px;">
+            WIF: <input class=mono size=60 id=keys-wif><br>
+            </p>
+            <p>
+            <div class=button data-click=importWif>
+                Make New Identity Using Imported skId
+            </div>
+            </p><br>
+        </div>
+    </div>
+</div>
+
+<div id=popup-approveNewIdentity class=popup>
+    <h1>Identity Not Yet Approved</h1>
+    <p>Your identity has not yet been approved by the market admins.
+    You can request this at the following web pages:</p>
+    <ul id=popup-approveNewIdentity-list></ul>
+    <p>The identity appears in your list of keys immediately, but
+    can't be used to send messages on the market until it's approved.</p>
+
+    <div class=button onclick="ui.navReload();">Confirm Approval</div> &emsp;
+    <div class=button onclick="ui.hidePopup();">Not Now</div>
+</div>
+
+<div id=popup-keysForIdentity class=popup>
+    <h1>Keys Not Yet Broadcast To Market</h1>
+    <p>The market may not have your latest encryption or Bitcoin escrow
+    release keys. This means that other users might send encrypted messages
+    or funds using older keys that you plan to retire soon.</p>
+
+    <p>This loses the benefit of key rotation. To fix this, broadcast
+    your latest public keys now.</p>
+
+    <div class=button-blue data-click=broadcastKeysForIdentity>
+        Broadcast Latest Crypt/BTC Public Keys
+    </div> &emsp;
+    <div class=button onclick="ui.hidePopup();">
+        Dismiss Window
+    </div>
+</div>
+
+<div id=popup-exportKeys class=popup>
+    <h1>Export Cryptographic Keys</h1>
+    <p>You have generated new cryptographic keys, and you haven't
+    yet exported them. The keys are stored in browser local storage,
+    but you should also export them to a file, and save the file on a local
+    encrypted volume.</p>
+    <p>If you lose your keys, then you will lose your account's reputation
+    from feedback, access to all encrypted messages, and all escrowed
+    funds.</p>
+
+    <div class=button data-click=export>
+        Export Keys
+    </div>
+</div>
+
+<div id=popup-newBuyerIdentity class=popup>
+    <h1>New Buyer Pseudonym</h1>
+    <p>You can create a new buyer pseudonym. This hides the fact that
+    the same person placed multiple orders from the general public. Choose
+    a server from the list below:</p>
+    <ul id=popup-newBuyerIdentity-list></ul>
+    <p>It's best to always use the same server if possible, since the admin
+    of that server can learn the link between your pseudonyms.</p>
+
+    <div class=button onclick="ui.hidePopup()">
+        Dismiss Window
+    </div>
+</div>
+
+<div id=popup-addressBook class=popup>
+    <h1>Address Book</h1>
+
+    <table class=borders>
+    <thead><tr>
+        <th>Address</th>
+        <th>Nickname</th>
+    </tr></thead>
+    <tbody id=addressBook-popup-body></tbody>
+    </table>
+
+    <p>
+    <div class=button onclick="ui.hidePopup();">
+        Dismiss Window
+    </div>
+    </p>
+</div>
+
+<div id=popup-escrow class=popup>
+    <h1>Propose Escrow Release</h1>
+
+    <p>
+    <div class=indent>
+        <table class=borders>
+            <thead><tr>
+                <th>TXID</th>
+                <th>vout</th>
+                <th>Value</th>
+            </tr></thead>
+            <tbody id=escrow-txos></tbody>
+        </table>
+    </div>
+    </p>
+
+    <p>Propose that all funds above be released to:</p>
+    <table class=twocol>
+        <tr>
+            <td>Address:</td>
+            <td><input class=btcaddr id=escrow-addr></td>
+        </tr><tr>
+            <td>Transaction Fee:</td>
+            <td><input id=escrow-fee value="0.0001" size=5> BTC</td>
+        </tr>
+    </table>
+
+    <p>
+        <div class=button id=escrow-compose>
+            Compose Message Proposing Escrow Release
+        </div> &emsp;
+        <div class=button onclick="ui.hidePopup();">
+            Dismiss Window
+        </div>
+    </p>
+</div>
+
+<div id=popup-viewTx class=popup>
+    <h1>View Transaction As Hex</h1>
+    <textarea class=mono rows=13 cols=80 readonly id=viewTx-tx></textarea>
+    <p>
+        <div class=button onclick="ui.hidePopup();">
+            Dismiss Window
+        </div>
+        &emsp;
+        signed by <span id=viewTx-n></span>/3 parties
+    </p>
+</div>
+
+<div id=popup-trustDel class=popup>
+    <h1>Feedback Already Exists</h1>
+    <p>You have already left feedback for this user. To leave new
+    feedback, delete the old feedback first.</p>
+    <div class=button-blue id=trustDel-delete>
+        Broadcast Delete Old Feedback
+    </div>
+</div>
+
+<div id=popup-wait class=popup>
+    <h1>Performing EC Math...</h1>
+</div>
+
+<div id=popup-notify class=popup>
+    <h1>Notification </h1>
+    <p id=popup-notify-text></p>
+    <div class=button onclick="ui.hidePopup();" id=popup-notify-button>
+        Dismiss Window
+    </div>
+</div>
+
+<div id=popup-log class=popup>
+    <h1>Network Activity Log</h1>
+    <textarea rows=13 cols=80 readonly class=mono id=log-text wrap=off></textarea>
+    <p>
+        <div style="float: left;">
+            <div class=button id=popup-log-dismiss onclick="ui.hidePopup();">
+                Dismiss Window
+            </div>
+        </div>
+        <div style="float:right;" id=popup-log-countdown>
+        </div>
+    </p>
+</div>
+
+<div class=spacer style="position: absolute; bottom: 0;">
+</div>
+</div>
+<div id=dimmer class=nh></div>
+
+</body>
+</html>
+
