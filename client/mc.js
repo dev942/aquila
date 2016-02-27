@@ -24,6 +24,17 @@ aq.gotOneMarketControl = function(data, state) {
         };
     }
 
+    // Compute ownership as we go, and stop processing responses from a host
+    // if the transactions don't involve colored coins, to limit DoS
+    // opportunity (by providing lots of txs with signatures to check). We'll
+    // need to recompute ownership later with all transactions, though, to
+    // stop past owners from voting.
+    var cap = { };
+    conf.genesisTxo.forEach(function(txo) {
+        var key = txo[0] + ',' + txo[1];
+        cap[key] = txo[2];
+    });
+
     for(var i = 0; i < data.result.txs.length; i++) {
         var tx = data.result.txs[i];
         var b = blocks[tx.blockNumber];
@@ -51,6 +62,48 @@ aq.gotOneMarketControl = function(data, state) {
         txid = cutil.reverseBuffer(txid).toString('hex');
         if(!txid === tx.txid) {
             ui.log('txid is wrong, ignoring server');
+            return;
+        }
+
+        // Compute the number of shares out, so that we can confirm that
+        // later transactions spending outputs of this one really are
+        // colored coin transactions.
+        var vt = aq.verifyTransaction(tx.hex);
+        if(!vt) {
+            ui.log('failed to verify transaction, ignoring server');
+            return;
+        }
+        var inShares = 0;
+        vt.ins.forEach(function(txi) {
+            var key = cutil.txoStringKey(txi);
+            if(key in cap) {
+                inShares += cap[key];
+                delete cap[key];
+            }
+        });
+        var totalValue = 0, outUnrounded = inShares - conf.destroyPerTransfer;
+        for(var j = 0; j < vt.outs.length; j++) {
+            var value = vt.outs[j].value;
+            if(cutil.valueIsColoredSatoshis(value)) {
+                totalValue += value;
+            }
+        }
+        if(outUnrounded <= 0 || totalValue <= 0) {
+            ui.log('tx has no colored outputs, ignoring server');
+            return;
+        }
+        var totalOut = 0;
+        for(var j = 0; j < vt.outs.length; j++) {
+            var value = vt.outs[j].value,
+                txo = tx.txid + ',' + j;
+            if(cutil.valueIsColoredSatoshis(value)) {
+                var sharesOut = Math.floor(outUnrounded*(value/totalValue));
+                cap[txo] = sharesOut;
+                totalOut += sharesOut;
+            }
+        }
+        if(totalOut !== tx.sharesOut) {
+            ui.log('wrong number of shares out');
             return;
         }
 
@@ -157,6 +210,8 @@ aq.verifyTransaction = function(txHex) {
         if(!isObj(tx)) {
             throw 'bitcoin.Transaction return bad';
         }
+
+        if(tx.ins.length > 4) throw 'too many inputs for tx';
 
         for(var i = 0; i < tx.ins.length; i++) {
             var txin = tx.ins[i];

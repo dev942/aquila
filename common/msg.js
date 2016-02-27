@@ -348,6 +348,7 @@ msg.marketControlVotingPower = function(mc, t, agingFactor,
                                                     owners, delegates)
 {
     if(mc.type !== 'marketControl') return -1e10;
+    if(mc.adminValidTo[0] < t) return -1e10;
 
     var votingPower = 0, alreadySignedBy = { };
     for(var i = 0; i < mc.ownerSig.length; i++) {

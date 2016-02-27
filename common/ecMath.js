@@ -290,9 +290,20 @@ ecMath.decrypt = function(msg, privKey) {
 
 /**
  * Verify an ECDSA signature. This is copied from bitcoinjs-lib since
- * they don't export it.
+ * they don't export it. We cache signatures so that e.g. checking the
+ * same transaction received multiple times from multiple servers does
+ * not become slow.
  */
+ecMath.ecdsaSignatures = { };
 ecMath.verifyEcdsa = function(hash, signature, Q) {
+    var key = hash.toString('hex') + ',' +
+              Q.getEncoded().toString('hex') + ',' +
+              signature.r.toBuffer().toString('hex') + ',' +
+              signature.s.toBuffer().toString('hex');
+    if(key in ecMath.ecdsaSignatures) {
+        return ecMath.ecdsaSignatures[key];
+    }
+
     var secp256k1 = ecMath.curve;
 
     var n = secp256k1.n;
@@ -312,7 +323,10 @@ ecMath.verifyEcdsa = function(hash, signature, Q) {
     if (secp256k1.isInfinity(R)) return false;
     var xR = R.affineX;
     var v = xR.mod(n);
-    return v.equals(r);
+
+    var ok = v.equals(r);
+    ecMath.ecdsaSignatures[key] = ok;
+    return ok;
 };
 
 ecMath.test = function() {

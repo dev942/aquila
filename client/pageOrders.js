@@ -94,7 +94,7 @@ aq.page.order = {
             if($.grep(mc.adminBtc, function(v) {
                     return (v === order.pkAdmin); }).length === 0)
             {
-                throw 'admin btc key not valid';
+                $('#order-oldAdminBtc').css('display', 'inline');
             }
             if(order.cipherTo[0] !== listing.sigFrom) throw 'not to seller';
 
